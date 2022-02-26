@@ -9,11 +9,12 @@ import TableRow from "@mui/material/TableRow";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import del from "../../assets/delete.svg";
-import edit from "../../assets/edit.svg";
-import Toastify from "../../helpers/Toastify";
+import Toastify from "../../helpers/ToastifySuccess";
 import { CustomTableCell } from "../CustomTableCell";
+import useData from "../../hooks/useData";
 
-export default function TableComponent({ changed, setChanged }) {
+export default function TableComponent() {
+  const { changed, setOpenPopUp, setPopUpMode, setPatientId } = useData();
   const [rows, setRows] = useState([]);
 
   useEffect(async () => {
@@ -28,23 +29,10 @@ export default function TableComponent({ changed, setChanged }) {
     }
   }, [changed]);
 
-  const user = {
-    name: "mario",
-    birthdate: "2000-12-20",
-    email: "mail@mail.com",
-    address: "adress",
-  };
-
-  const handleDelete = async (id) => {
-    const result = await fetch(
-      "https://kklmlkcau0.execute-api.sa-east-1.amazonaws.com/prod/patients",
-      {
-        method: "DELETE",
-        body: JSON.stringify({ id }),
-      }
-    );
-    setChanged(result);
-    Toastify("Paciente Excluido");
+  const handleDelete = (id) => {
+    setPatientId(id);
+    setPopUpMode("delete");
+    setOpenPopUp(true);
   };
 
   return (

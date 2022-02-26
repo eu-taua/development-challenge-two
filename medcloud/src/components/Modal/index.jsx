@@ -1,14 +1,14 @@
-import * as React from "react";
+import { Box, InputLabel, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Paper from "@mui/material/Paper";
-import Draggable from "react-draggable";
-import { TextField, InputLabel, Box } from "@mui/material";
+import * as React from "react";
 import { useState } from "react";
-import Toastify from "../../helpers/Toastify";
+import Draggable from "react-draggable";
+import useData from "../../hooks/useData";
 
 function PaperComponent(props) {
   return (
@@ -21,14 +21,16 @@ function PaperComponent(props) {
   );
 }
 
-export default function Modal({ open, setOpen, registerPatient }) {
+export default function Modal() {
+  const { openModal, setOpenModal, registerPatient } = useData();
+
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenModal(false);
   };
 
   const handleRegister = async () => {
@@ -38,13 +40,13 @@ export default function Modal({ open, setOpen, registerPatient }) {
       email,
       address,
     });
-    setOpen(false);
+    setOpenModal(false);
   };
 
   return (
     <div>
       <Dialog
-        open={open}
+        open={openModal}
         onClose={handleClose}
         PaperComponent={PaperComponent}
         aria-labelledby="draggable-dialog-title"
