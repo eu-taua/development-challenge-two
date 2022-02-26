@@ -7,6 +7,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import * as React from "react";
 import useData from "../../hooks/useData";
+import useRequests from "../../hooks/useRequests";
 import Draggable from "react-draggable";
 import Paper from "@mui/material/Paper";
 
@@ -22,8 +23,8 @@ function PaperComponent(props) {
 }
 
 export default function ConfirmationPopUp() {
-  const { openPopUp, setOpenPopUp, popUpMode, deletePatient, patientId } =
-    useData();
+  const { openPopUp, setOpenPopUp, popUpMode } = useData();
+  const { deletePatient, patientId } = useRequests();
 
   const handleDelete = () => {
     deletePatient(patientId);

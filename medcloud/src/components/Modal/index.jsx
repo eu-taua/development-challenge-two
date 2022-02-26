@@ -9,6 +9,7 @@ import * as React from "react";
 import { useState } from "react";
 import Draggable from "react-draggable";
 import useData from "../../hooks/useData";
+import useRequests from "../../hooks/useRequests";
 
 function PaperComponent(props) {
   return (
@@ -22,7 +23,8 @@ function PaperComponent(props) {
 }
 
 export default function Modal() {
-  const { openModal, setOpenModal, registerPatient } = useData();
+  const { openModal, setOpenModal } = useData();
+  const { registerPatient } = useRequests();
 
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");

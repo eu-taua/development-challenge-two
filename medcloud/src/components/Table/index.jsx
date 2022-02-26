@@ -9,30 +9,29 @@ import TableRow from "@mui/material/TableRow";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import del from "../../assets/delete.svg";
-import Toastify from "../../helpers/ToastifySuccess";
+import edit from "../../assets/edit.svg";
 import { CustomTableCell } from "../CustomTableCell";
 import useData from "../../hooks/useData";
+import useRequests from "../../hooks/useRequests";
 
 export default function TableComponent() {
-  const { changed, setOpenPopUp, setPopUpMode, setPatientId } = useData();
+  const { changed, setOpenPopUp, setPopUpMode } = useData();
+  const { getPatients, setPatientId } = useRequests();
   const [rows, setRows] = useState([]);
 
   useEffect(async () => {
-    try {
-      const result = await fetch(
-        "https://kklmlkcau0.execute-api.sa-east-1.amazonaws.com/prod/patients"
-      );
-      const patients = await result.json();
-      setRows(patients.body);
-    } catch (error) {
-      Toastify(error.message);
-    }
+    setRows(await getPatients());
   }, [changed]);
 
   const handleDelete = (id) => {
     setPatientId(id);
     setPopUpMode("delete");
     setOpenPopUp(true);
+  };
+
+  const handleEdit = (id) => {
+    setPatientId(id);
+    //abrir modal com os dados do paciente clicado
   };
 
   return (
@@ -81,6 +80,12 @@ export default function TableComponent() {
 
                 <CustomTableCell align="left">
                   <Box display="flex">
+                    <IconButton
+                      disableRipple
+                      onClick={() => handleEdit(row.id)}
+                    >
+                      <img src={edit} alt="editar" />
+                    </IconButton>
                     <IconButton
                       disableRipple
                       onClick={() => handleDelete(row.id)}
