@@ -10,6 +10,7 @@ import { useState } from "react";
 import Draggable from "react-draggable";
 import useData from "../../hooks/useData";
 import useRequests from "../../hooks/useRequests";
+import InputMask from "react-input-mask";
 
 function PaperComponent(props) {
   return (
@@ -33,18 +34,28 @@ export default function Modal() {
 
   const handleClose = () => {
     setOpenModal(false);
+    cleanInputs();
   };
 
   const handleRegister = async () => {
+    let date = new Date(birthdate);
+    date = date.toLocaleDateString("en-US");
     registerPatient({
       name,
-      birthdate,
+      date,
       email,
       address,
     });
     setOpenModal(false);
+    cleanInputs();
   };
 
+  const cleanInputs = () => {
+    setName("");
+    setBirthdate("");
+    setEmail("");
+    setAddress("");
+  };
   return (
     <div>
       <Dialog
@@ -52,63 +63,83 @@ export default function Modal() {
         onClose={handleClose}
         PaperComponent={PaperComponent}
         aria-labelledby="draggable-dialog-title"
+        PaperProps={{
+          style: {
+            borderRadius: "2rem",
+            width: "22rem",
+          },
+        }}
       >
-        <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
-          Novo Paciente
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-          }}
-        >
-          <Box>
-            <InputLabel htmlFor="Nome">Nome</InputLabel>
-            <TextField
-              size="small"
-              name="Nome"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </Box>
+        <Box display="flex" flexDirection={"column"} alignItems={"center"}>
+          <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
+            Novo Paciente
+          </DialogTitle>
+          <DialogContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+            }}
+          >
+            <Box>
+              <InputLabel htmlFor="Nome">Nome</InputLabel>
+              <TextField
+                size="small"
+                name="Nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Box>
 
-          <Box>
-            <InputLabel htmlFor="birthdate">Data de Nascimento</InputLabel>
-            <TextField
-              size="small"
-              name="birthdate"
-              placeholder="0000-00-00"
-              value={birthdate}
-              onChange={(e) => setBirthdate(e.target.value)}
-            />
-          </Box>
-          <Box>
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <TextField
-              size="small"
-              name="email"
-              placeholder="exemplo@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Box>
-          <Box>
-            <InputLabel htmlFor="address">Endereço</InputLabel>
-            <TextField
-              size="small"
-              name="address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose}>
-            Cancelar
-          </Button>
-          <Button onClick={handleRegister}>Confirmar</Button>
-        </DialogActions>
+            <Box>
+              <InputLabel htmlFor="birthdate">Data de Nascimento</InputLabel>
+              <InputMask
+                mask="99/99/9999"
+                value={birthdate}
+                disabled={false}
+                maskChar=" "
+                onChange={(e) => setBirthdate(e.target.value)}
+              >
+                {() => (
+                  <TextField
+                    size="small"
+                    name="birthdate"
+                    placeholder="00/00/0000"
+                    value={birthdate}
+                  />
+                )}
+              </InputMask>
+            </Box>
+            <Box>
+              <InputLabel htmlFor="email">Email</InputLabel>
+              <TextField
+                fullWidth
+                size="small"
+                name="email"
+                placeholder="exemplo@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Box>
+            <Box>
+              <InputLabel htmlFor="address">Endereço</InputLabel>
+              <TextField
+                size="small"
+                name="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </Box>
+            <DialogActions>
+              <Button variant="text" onClick={handleClose}>
+                Cancelar
+              </Button>
+              <Button variant="contained" onClick={handleRegister}>
+                Confirmar
+              </Button>
+            </DialogActions>
+          </DialogContent>
+        </Box>
       </Dialog>
     </div>
   );

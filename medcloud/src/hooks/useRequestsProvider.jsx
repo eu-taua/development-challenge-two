@@ -20,6 +20,7 @@ export default function Provider() {
   };
 
   const registerPatient = async (patient) => {
+    console.log(patient);
     try {
       const result = await fetch(
         "https://kklmlkcau0.execute-api.sa-east-1.amazonaws.com/prod/patients",

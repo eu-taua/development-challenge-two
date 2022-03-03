@@ -3,7 +3,7 @@ import { withTheme } from "@mui/styles";
 import { styled } from "@mui/system";
 
 export const CustomTableCell = styled(withTheme(TableCell))((props) => ({
-  fontSize: "1rem",
+  fontSize: "0.8rem",
   overflow: "hidden",
   maxWidth: "8rem",
   color: props.theme.palette.secondary.main,
