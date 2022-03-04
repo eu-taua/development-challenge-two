@@ -5,6 +5,7 @@ import useData from "../hooks/useData";
 
 export default function Provider() {
   const [patientId, setPatientId] = useState();
+  const [patientInEditing, setPatientInEditing] = useState();
   const { setChanged } = useData();
 
   const getPatients = async () => {
@@ -20,7 +21,6 @@ export default function Provider() {
   };
 
   const registerPatient = async (patient) => {
-    console.log(patient);
     try {
       const result = await fetch(
         "https://kklmlkcau0.execute-api.sa-east-1.amazonaws.com/prod/patients",
@@ -33,6 +33,22 @@ export default function Provider() {
       ToastifySuccess("Cadastrado com Sucesso");
     } catch (error) {
       ToastifyError("Falha ao Cadastrar");
+    }
+  };
+
+  const editPatient = async (patient) => {
+    try {
+      const result = await fetch(
+        "https://kklmlkcau0.execute-api.sa-east-1.amazonaws.com/prod/patients",
+        {
+          method: "PUT",
+          body: JSON.stringify(patient),
+        }
+      );
+      setChanged(result);
+      ToastifySuccess("Editado com Sucesso");
+    } catch (error) {
+      ToastifyError("Falha ao Editar");
     }
   };
 
@@ -55,8 +71,11 @@ export default function Provider() {
   return {
     patientId,
     setPatientId,
+    patientInEditing,
+    setPatientInEditing,
     getPatients,
     registerPatient,
     deletePatient,
+    editPatient,
   };
 }

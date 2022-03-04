@@ -15,8 +15,9 @@ import useData from "../../hooks/useData";
 import useRequests from "../../hooks/useRequests";
 
 export default function TableComponent() {
-  const { changed, setOpenPopUp, setPopUpMode } = useData();
-  const { getPatients, setPatientId } = useRequests();
+  const { changed, setOpenPopUp, setPopUpMode, formatedDate, setOpenModal } =
+    useData();
+  const { getPatients, setPatientId, setPatientInEditing } = useRequests();
   const [rows, setRows] = useState([]);
 
   useEffect(async () => {
@@ -29,8 +30,10 @@ export default function TableComponent() {
     setOpenPopUp(true);
   };
 
-  const handleEdit = (id) => {
-    setPatientId(id);
+  const handleEdit = (patient) => {
+    setPatientInEditing(patient);
+    setOpenModal(true);
+
     //abrir modal com os dados do paciente clicado
   };
 
@@ -73,17 +76,14 @@ export default function TableComponent() {
                 <CustomTableCell align="left">{row.id}</CustomTableCell>
                 <CustomTableCell align="left">{row.name}</CustomTableCell>
                 <CustomTableCell align="left">
-                  {row.birthdate.substring(0, row.birthdate.indexOf("T"))}
+                  {formatedDate(row.birthdate)}
                 </CustomTableCell>
                 <CustomTableCell align="left">{row.email}</CustomTableCell>
                 <CustomTableCell align="left">{row.address}</CustomTableCell>
 
                 <CustomTableCell align="left">
                   <Box display="flex">
-                    <IconButton
-                      disableRipple
-                      onClick={() => handleEdit(row.id)}
-                    >
+                    <IconButton disableRipple onClick={() => handleEdit(row)}>
                       <img src={edit} alt="editar" />
                     </IconButton>
                     <IconButton

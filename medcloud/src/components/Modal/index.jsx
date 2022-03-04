@@ -26,17 +26,32 @@ function PaperComponent(props) {
 }
 
 export default function Modal() {
-  const { openModal, setOpenModal } = useData();
-  const { registerPatient } = useRequests();
+  const { openModal, setOpenModal, formatedDate } = useData();
+  const {
+    registerPatient,
+    editPatient,
+    patientInEditing,
+    setPatientInEditing,
+  } = useRequests();
 
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
 
+  React.useEffect(() => {
+    if (patientInEditing) {
+      setName(patientInEditing.name);
+      setBirthdate(formatedDate(patientInEditing.birthdate));
+      setEmail(patientInEditing.email);
+      setAddress(patientInEditing.address);
+    }
+  }, [patientInEditing]);
+
   const handleClose = () => {
     setOpenModal(false);
     cleanInputs();
+    setPatientInEditing();
   };
 
   const handleRegister = async (name, birthdate, email, address) => {
@@ -54,15 +69,26 @@ export default function Modal() {
     const emailValidation = /\S+@\S+\.\S+/;
     if (!emailValidation.test(email)) return ToastifyError("Email Inválido");
 
-    registerPatient({
-      name,
-      birthdate: date,
-      email,
-      address,
-    });
+    if (!patientInEditing) {
+      registerPatient({
+        name,
+        birthdate: date,
+        email,
+        address,
+      });
+    } else {
+      editPatient({
+        id: patientInEditing.id,
+        name,
+        birthdate: date,
+        email,
+        address,
+      });
+    }
 
     setOpenModal(false);
     cleanInputs();
+    setPatientInEditing();
   };
 
   const cleanInputs = () => {
@@ -71,6 +97,7 @@ export default function Modal() {
     setEmail("");
     setAddress("");
   };
+
   return (
     <div>
       <Dialog
@@ -87,7 +114,7 @@ export default function Modal() {
       >
         <Box display="flex" flexDirection={"column"} alignItems={"center"}>
           <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
-            Novo Paciente
+            {patientInEditing ? "Editar Paciente" : "Novo Paciente"}
           </DialogTitle>
           <DialogContent
             sx={{
@@ -101,8 +128,8 @@ export default function Modal() {
               <TextField
                 size="small"
                 name="Nome"
-                value={name}
                 onChange={(e) => setName(e.target.value)}
+                value={name}
               />
             </Box>
 
@@ -110,9 +137,9 @@ export default function Modal() {
               <InputLabel htmlFor="birthdate">Data de Nascimento</InputLabel>
               <InputMask
                 mask="99/99/9999"
-                value={birthdate}
                 disabled={false}
                 maskChar=" "
+                value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
               >
                 {() => (
@@ -151,7 +178,9 @@ export default function Modal() {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => handleRegister(name, birthdate, email, address)}
+                onClick={() => {
+                  handleRegister(name, birthdate, email, address);
+                }}
               >
                 Confirmar
               </Button>
