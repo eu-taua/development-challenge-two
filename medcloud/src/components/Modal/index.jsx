@@ -11,6 +11,8 @@ import Draggable from "react-draggable";
 import useData from "../../hooks/useData";
 import useRequests from "../../hooks/useRequests";
 import InputMask from "react-input-mask";
+import { format, parse } from "date-fns";
+import ToastifyError from "../../helpers/ToastifyError";
 
 function PaperComponent(props) {
   return (
@@ -37,15 +39,28 @@ export default function Modal() {
     cleanInputs();
   };
 
-  const handleRegister = async () => {
-    let date = new Date(birthdate);
-    date = date.toLocaleDateString("en-US");
+  const handleRegister = async (name, birthdate, email, address) => {
+    if (!name || !birthdate || !email || !address) {
+      return ToastifyError("Preencha todos os campos");
+    }
+
+    let date = parse(birthdate, "dd/MM/yyyy", new Date());
+    try {
+      date = format(date, "yyyy-MM-dd");
+    } catch (err) {
+      return ToastifyError("Data Inválida");
+    }
+
+    const emailValidation = /\S+@\S+\.\S+/;
+    if (!emailValidation.test(email)) return ToastifyError("Email Inválido");
+
     registerPatient({
       name,
-      date,
+      birthdate: date,
       email,
       address,
     });
+
     setOpenModal(false);
     cleanInputs();
   };
@@ -134,7 +149,10 @@ export default function Modal() {
               <Button variant="text" onClick={handleClose}>
                 Cancelar
               </Button>
-              <Button variant="contained" onClick={handleRegister}>
+              <Button
+                variant="contained"
+                onClick={() => handleRegister(name, birthdate, email, address)}
+              >
                 Confirmar
               </Button>
             </DialogActions>
